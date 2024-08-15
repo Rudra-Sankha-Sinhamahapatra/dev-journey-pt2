@@ -66,9 +66,9 @@ const Wallet = () => {
                 className="mt-4 p-4 bg-gray-700 rounded-lg border border-blue-500 shadow-md"
               >
                 <h3 className="font-medium text-gray-200">Wallet {index + 1}</h3>
-                <p className="mt-2"><strong>Public Key:</strong></p>
+                <p className="mt-2"><strong className="text-white">Public Key:</strong></p>
                 <p className="key mt-1 p-2 bg-gray-800 rounded text-gray-200 break-all">{wallet.publicKey}</p>
-                <p className="mt-4"><strong>Secret Key:</strong></p>
+                <p className="mt-4"><strong className="text-white">Private Key:</strong></p>
                 <p className="key mt-1 p-2 bg-gray-800 rounded text-gray-200 break-all">{wallet.secretKey}</p>
               </div>
             ))}
