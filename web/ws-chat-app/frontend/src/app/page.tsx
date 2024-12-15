@@ -1,8 +1,8 @@
 
-import ChatPage from "./components/ChatPage";
+import { Home as HomePage } from "@/app/components/Home";
 
 export default function Home() {
   return (
-    <ChatPage/>
+    <HomePage/>
   );
 }
