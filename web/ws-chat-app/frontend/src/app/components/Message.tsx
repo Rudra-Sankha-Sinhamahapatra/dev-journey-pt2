@@ -1,59 +1,95 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {v4} from 'uuid'
 
 export const Message = () => {
-    const [socket,setSocket] = useState<WebSocket | null>(null);
+  const searchParams = useSearchParams();
+  const roomId = searchParams.get("roomId");
+    const socketRef = useRef<WebSocket | null>(null);
     const inputRef = useRef<HTMLTextAreaElement | null>(null);
-    const [messages,setMessages] = useState<{userId:string;message:string}[]>([]);
+    const [messages,setMessages] = useState<{userId:string;message:string;messageId:string}[]>([]);
     const [userId] = useState(() => v4()); 
 
-  function sendMessage() {
+  const sendMessage = useCallback(()=> {
     console.log("Message sent!");
-    if(!socket) {
-        return;
-    }
+  if(!socketRef.current || socketRef.current.readyState!==WebSocket.OPEN){
+    console.log("WebSocket is not open");
+    return;
+  }
     
     if(inputRef.current){
     const message = inputRef.current.value.trim();
     if(message){
-      const payload = JSON.stringify({userId,message});
+      const payload = JSON.stringify({
+        type:'chat',
+        payload:{userId,message,room:roomId},
+      });
       console.log('payload:',payload)
-     socket.send(payload);
+     socketRef.current.send(payload);
      inputRef.current.value = ''
     }
   }
-}
+},[roomId,userId])
 
-  useEffect(()=>{
+const init = useCallback(() => {
+  if (!roomId) {
+    alert("No Room ID Provided! Skipping WebSocket connection");
+    return;
+  }
+
+  if (socketRef.current) {
+    console.log("WebSocket already initialized.");
+    return;
+  }
+
   const ws = new WebSocket("ws://localhost:8080");
-   setSocket(ws);
+  socketRef.current = ws;
+
+  ws.onopen = () => {
+    console.log("WebSocket Opened: ", ws);
+    const joinPayload = JSON.stringify({
+      type: "join",
+      payload: {
+        roomId,
+        userId,
+      },
+    });
+    ws.send(joinPayload);
+  };
+
   ws.onmessage = (ev) => {
     try {
-    const data = JSON.parse(ev.data);
-    console.log('Received data',data);
-   setMessages((prev)=>[...prev,data]);
-   console.log('ev.data: ',ev.data);
-    } catch(error) {
-      console.log("Error parsing incoming data",error);
+      const data = JSON.parse(ev.data);
+      console.log("Received data", data);
+      setMessages((prev) => {
+        if (prev.some((msg) => msg.messageId === data.messageId)) {
+          return prev;
+        }
+        return [...prev, data];
+      });
+    } catch (error) {
+      console.log("Error parsing incoming data", error);
     }
-  }
+  };
 
-  ws.onclose = () => {
-    console.log("Web socket connection closed");
-    alert("web socket connection closed,Refresh to start a fresh chart");
-  }
+  ws.onerror = () => alert("WebSocket connection error. Refresh and try again.");
+  ws.onclose = () => alert("WebSocket connection closed. Refresh and try again.");
+}, [roomId, userId]);
 
-  ws.onerror = () => {
-    console.log("Web socket connection error");
-    alert("web socket connection error,refresh and try again");
-  }
-
+useEffect(() => {
+  init();
   return () => {
-    ws.close();
-  }
-  },[])
+    if (socketRef.current?.readyState === WebSocket.OPEN) {
+      socketRef.current.close();
+    }
+    socketRef.current = null;
+  };
+}, [init]);
+
+
+
   return (
     <>
     <div className="flex-grow overflow-y-auto flex flex-col gap-3">
@@ -79,3 +115,4 @@ export const Message = () => {
     </>
   );
 };
+
