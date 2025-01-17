@@ -7,9 +7,9 @@ import { burnTokens, mintTokens, sendNativeTokens } from './mintTokens';
 const app = express();
 
 const HELIUS_RESPONSE = { 
-    "nativeTransfers": [ { "amount": 1000000000, "fromUserAccount": "Er5Wm5aEBhqaA1ypkVz7oizasdC7dUmVyAMSMy1Kmmjy", "toUserAccount": "8VL97C7WdJuVMQuXaqjjaVCy3z93GCTQCwywGfSvwNPC" } ] }
+    "nativeTransfers": [ { "amount": 1000000000, "fromUserAccount": "Er5Wm5aEBhqaA1ypkVz7oizasdC7dUmVyAMSMy1Kmmjy", "toUserAccount": "4DFtKknDUWHJMMDbdnJP7EHWGE3uCsUDtuaV3M5hs4o6" } ] }
 
-    const VAULT = "8VL97C7WdJuVMQuXaqjjaVCy3z93GCTQCwywGfSvwNPC"
+    const VAULT = "4DFtKknDUWHJMMDbdnJP7EHWGE3uCsUDtuaV3M5hs4o6"
 app.post("/helius",async(req,res)=>{
     const incomingTx = HELIUS_RESPONSE.nativeTransfers.find(x=>x.toUserAccount === VAULT);
 

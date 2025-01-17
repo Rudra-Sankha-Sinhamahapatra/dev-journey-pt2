@@ -20,7 +20,7 @@ export const mintTokens = async (fromAddress:string, toAddress:string, amount:nu
         console.log("error")
         return
     }
-    const mintto = new PublicKey(TOKEN_MINT_ADDRESS);
+    const mintto = new PublicKey(fromAddress);
     console.log("Minting Tokens");
     try {
         const ata = await getOrCreateAssociatedTokenAccount(
