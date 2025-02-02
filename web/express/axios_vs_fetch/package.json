@@ -1,0 +1,14 @@
+{
+  "name": "axios_vs_fetch",
+  "packageManager": "yarn@4.4.1",
+  "dependencies": {
+    "@types/express": "^5.0.0",
+    "axios": "^1.7.9",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
+  }
+}
