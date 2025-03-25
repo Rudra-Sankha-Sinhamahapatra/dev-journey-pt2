@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import  client from "prom-client";
 import { activeRequests } from "./activeRequests";
+import { httpRequestDuration } from "./histogram";
 
 const requestClient = new client.Counter({
     name:"http_request_count",
@@ -32,6 +33,8 @@ export const cleanupMiddleware = (req:Request,res:Response,next:NextFunction) =>
 
     res.on("finish",function() {
         const endTime = Date.now();
+        const duration = endTime - startTime;
+
         console.log(`${req.method} ${req.url} ${res.statusCode} ${endTime - startTime}ms`);
 
         requestClient.inc({
@@ -39,6 +42,15 @@ export const cleanupMiddleware = (req:Request,res:Response,next:NextFunction) =>
             route:req.route?req.route.path:req.path,
             status_code:res.statusCode
         });
+
+        httpRequestDuration.observe({
+            method:req.method,
+            route:req.route ? req.route.path : req.path,
+            status_code:res.statusCode
+        },duration)
+
         activeRequests.dec();
     })
+    next();
 }
+
