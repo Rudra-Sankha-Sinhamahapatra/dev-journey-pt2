@@ -1,18 +1,33 @@
-import express from "express";
-import client from "prom-client";
-const router = express.Router();
+import { NextFunction, Request, Response } from "express";
+import { activeRequests } from "./activeRequests";
+import { httpRequestDuration } from "./histogram";
+import { requestClient } from "./requestCount";
 
-router.get("/metrics", async (req, res) => {
-  const metrics = await client.register.metrics();
-  res.set("Content-Type", client.register.contentType);
-  res.send(metrics);
-});
+export const metricsMiddleware = (req:Request,res:Response,next:NextFunction)=>{
+  const startTime = Date.now();
+  activeRequests.inc();
 
-router.get("/user",async(req,res)=>{
-    await new Promise((resolve)=>setTimeout(resolve,1000));
-    res.send({
-        name:"Rudra",
-        age:25
-    })
-})
-export default router;
+  res.on("finish",()=> {
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+      console.log(`${req.method} ${req.url} ${res.statusCode} ${endTime - startTime}ms`);
+
+      requestClient.inc({
+          method:req.method,
+          route:req.route?req.route.path:req.path,
+          status_code:res.statusCode
+      });
+
+      httpRequestDuration.observe({
+          method:req.method,
+          route:req.route ? req.route.path : req.path,
+          status_code:res.statusCode
+      },duration)
+
+      activeRequests.dec();
+  });
+
+  next();
+}
+
+
