@@ -21,7 +21,7 @@ app.get("/metrics", async (req, res) => {
 
 app.get("/user",async(req,res)=>{
   try {
-    await new Promise((resolve)=>setTimeout(resolve,3000));
+    await new Promise((resolve)=>setTimeout(resolve,1000));
     res.send({
         name:"Rudra",
         age:25

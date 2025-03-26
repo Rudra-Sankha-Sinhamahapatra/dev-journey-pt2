@@ -5,7 +5,10 @@ import { requestClient } from "./requestCount";
 
 export const metricsMiddleware = (req:Request,res:Response,next:NextFunction)=>{
   const startTime = Date.now();
-  activeRequests.inc();
+  activeRequests.inc({
+    method:req.method,
+    route:req.route?req.route.path:req.path,
+  });
 
   res.on("finish",()=> {
       const endTime = Date.now();
@@ -24,7 +27,10 @@ export const metricsMiddleware = (req:Request,res:Response,next:NextFunction)=>{
           status_code:res.statusCode
       },duration)
 
-      activeRequests.dec();
+      activeRequests.dec({
+        method:req.method,
+        route:req.route?req.route.path:req.path,
+      });
   });
 
   next();
