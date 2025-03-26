@@ -22,6 +22,16 @@ services:
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
 
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    networks:
+      - monitoring
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+        
+
 networks:
   monitoring:
     driver: bridge
