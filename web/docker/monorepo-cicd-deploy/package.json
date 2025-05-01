@@ -1,0 +1,28 @@
+{
+  "name": "mono-repo-1",
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "check-types": "turbo run check-types",
+    "start:backend": "cd apps/backend && bun run index.ts",
+    "start:ws": "cd apps/websocket && bun run index.ts",
+    "start:frontend": "cd apps/frontend && bun run start",
+    "generate:db": "cd packages/db && bunx prisma generate"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.0",
+    "turbo": "^2.4.2",
+    "typescript": "5.7.3"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "bun@1.2.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
