@@ -1,0 +1,8 @@
+postgresUser: user
+postgresPassword: password
+postgresDatabase: mydb
+namespace: postgres-chart-4
+image:
+  repository: postgres
+  tag: "16"
+name: postgres
