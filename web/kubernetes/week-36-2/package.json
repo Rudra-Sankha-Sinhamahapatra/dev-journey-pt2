@@ -1,0 +1,18 @@
+{
+  "name": "week-36-2",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run index.ts"
+  },  
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/express": "^5.0.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
