@@ -17,14 +17,11 @@ spec:
         image: rudrasankha/ecom-app-test:1
         ports:
         - containerPort: 3000
-        env:
-        - name: PORT
-          valueFrom:
-            configMapKeyRef:
-              name: ecom-backend-config
-              key: port
-        - name: DATABASE_URL
-          valueFrom:
-            secretKeyRef:
-              name: backend-secret
-              key: database_url
+        volumeMounts:
+        - name: env-file
+          readOnly: true
+          mountPath: "/app/"
+      volumes:
+      - name: env-file
+        secret:
+          secretName: backend-secret
