@@ -1,6 +1,30 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: week-36-2
+  name: ecom-backend-deployment
 spec:
-  
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ecom-backend
+  template:
+    metadata:
+      labels:
+        app: ecom-backend
+    spec:
+      containers:
+      - name: ecom-backend
+        image: rudrasankha/ecom-app-test:1
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: ecom-backend-config
+              key: port
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: backend-secret
+              key: database_url
